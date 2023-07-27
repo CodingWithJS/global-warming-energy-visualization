@@ -1,28 +1,59 @@
-<html>
+<!DOCTYPE html>
+<html lang="en"></html>
 <script src='https://d3js.org/d3.v5.min.js'></script>
-<style>
-    circle {
-        fill: lightblue;
-        stroke: black;
-    }
-</style>
+<script src="https://rawgit.com/susielu/d3-annotation/master/d3-annotation.min.js"></script>
+<script src="js/main.js"></script>
+<script src="js/charts/energy_cons.js"></script>
+<script src="js/chartText.js"></script>
+<link rel="icon" type="image/x-icon" href="images/favicon.png">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Warming and Energy Consumptions</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
 
-<body onload='init()'>
-    <svg width=300 height=300>
-    </svg>
-    <script>
-        async function init() {
-            const data = await d3.csv('https://flunky.github.io/cars2017.csv');
-            console.log(data);
-            var x = d3.scaleLog([10, 150], [0, 200]).base(10);
-            var y = d3.scaleLog([10, 150], [200, 0]).base(10);
-            var x_axis = d3.axisBottom(x).tickValues([10, 20, 50, 100]).tickFormat(d3.format("~s"));
-            var y_axis = d3.axisLeft(y).tickValues([10, 20, 50, 100]).tickFormat(d3.format("~s"));
-            d3.select("svg").append("g").attr("transform", "translate(" + 50 + "," + 50 + ")").selectAll("circle").data(data).enter().append("circle").attr("cx", function (d) { return x(parseInt(d['AverageCityMPG'])); }).attr("cy", function (d) { return y(parseInt(d['AverageHighwayMPG'])); }).attr("r", function (d) { return (2 + parseInt(d['EngineCylinders'])); });
-            d3.select("svg").append("g").attr("transform", "translate(" + 50 + "," + 50 + ")").call(y_axis);
-            d3.select("svg").append("g").attr("transform", "translate(" + 50 + "," + 250 + ")").call(x_axis);
-        }
-    </script>
-</body>
+<body>
+    <div class="flex-box">
+      <h1>Global Warming and Energy Consumptions</h1>
+    </div>
+    <div class="flex-box">
+      <ul class="navbar">
+          <li><a onclick="clearChart(svg_id);clearYears();init_energy_cons(svg_width,svg_height,undefined,undefined,svg_id);current_chart='energy_cons';loadH2Element(energy_consumption_chart_title);loadPElement(energy_consumption_chart_paragraph);">1. Energy</a></li>
+          <li><a onclick="clearChart(svg_id);clearYears();init_1796_1836(svg_width,svg_height,undefined,undefined,svg_id);current_chart='1796_1836';loadH2Element(chart_title_1796_1836);loadPElement(chart_paragraph_1796_1836);">2. 1796-1836</a></li>
+          <li><a onclick="clearChart(svg_id);clearYears();init_entire_timeline(svg_width,svg_height,undefined,undefined,svg_id);current_chart='full';loadH2Element(chart_title_full);loadPElement(chart_paragraph_full);">5. Full Recorded Timeline</a></li>
+        </ul>
+    </div>
+    <br>
+    <div class="flex-box">
+      <label>Start Year&nbsp;</label>
+      <select id="start-years" onchange="selectStartYear();clearChart(svg_id);initChart(start_year, end_year, current_chart);">
+        <option value="">-- Select Year --</option>
+      </select>&nbsp;
+      <label>End Year&nbsp;</label>
+      <select id="end-years" onchange="selectEndYear();clearChart(svg_id);initChart(start_year, end_year, current_chart);">
+        <option value="">-- Select Year --</option>
+      </select>&nbsp;
+      <button onclick="clearChart(svg_id);clearYears();initChart(start_year, end_year, current_chart);">Reset Chart</button>
+    </div>
+    <div class="flex-box">
+      <h2 id="chart-text"></h2>
+    </div>
+    <div class="flex-box-charts">
+      <svg id="global-warming-chart" width="800" height="500"></svg>
+    </div>
+    <br>
+    <hr>
+    <div class="flex-box">
+      <p id="chart-paragraph"></p>
+    </div>
+    <div class="flex-container">
+      <p>Data Sources:&nbsp;</p>
+      <a href="https://ourworldindata.org/">Our World In Data</a>
+      <span>&nbsp;|&nbsp;</span>
+      <a href="https://github.com/owid">Our World In Data Github</a>
+    </div>
+    <script src="js/charts/energy_cons.js" onload="init_energy_cons(svg_width,svg_height,undefined,undefined,svg_id);loadH2Element(energy_consumption_chart_title);loadPElement(energy_consumption_chart_paragraph);"></script>
+  </body>
 
 </html>
