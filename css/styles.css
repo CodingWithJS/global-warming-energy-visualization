@@ -3,13 +3,30 @@
   justify-content: center;
 }
 
+.flex-box-child1 {
+  flex-basis: 70%;
+}
+
+.flex-box-child2 {
+  flex-basis: 30%;
+}
+
+.parent{
+  display: inline-flex;
+
+}
+
+.flex-box-subchild1 {
+  float: left;
+}
+
+.flex-box-subchild2 {
+  flex-basis: 30%;
+}
+
 .flex-box-charts {
   display: flex;
   justify-content: center;
-}
-
-#chart-paragraph{
-  text-indent: 30px;
 }
 
 circle {
@@ -32,7 +49,7 @@ circle {
   display: block;
   color: #fff;
   text-decoration: none;
-  padding: 10px 20px;
+  padding: 0px 0px;
 }
 
 .navbar a:hover {
@@ -41,6 +58,11 @@ circle {
 
 .flex-container {
   display: flex;
-  justify-content: center; /* Adjust this property as needed */
-  align-items: center; /* Adjust this property as needed */
+  justify-content: center; 
+  align-items: center;
+}
+
+#legend svg {
+  height: 200px;
+  width: 200px;
 }
