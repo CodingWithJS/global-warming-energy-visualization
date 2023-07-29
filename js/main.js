@@ -1,6 +1,6 @@
 const svg_id = '#global-warming-chart';
-const svg_id_with_legend = 'global-warming-with-legend';
-const svg_id_with_legend_hash = '#global-warming-with-legend';
+const svg_id_with_legend = 'legend';
+const svg_id_with_legend_hash = '#legend';
 const svg_width = 800;
 const svg_height = 500;
 const chart_title_pre_1778 = "Population estimates prior to 1778";
@@ -9,9 +9,10 @@ const chart_title_1850_1950 = "Hawaiian/U.S. Population Census Data 1850 - 1950"
 const chart_title_1960_2020 = "U.S. Population Census Data 1960 - 2020";
 const chart_title_full = "Full Recorded Population Data Timeline";
 const energy_consumption_chart_title = "Energy Consumption in the World from Different Sources"
+const co2_chart_title = "CO2 Emissions by Fuel/Industry"
 var start_year;
 var end_year;
-var current_chart = 'pre_1778';
+var current_chart = 'energy_cons';
 
 function clearChart(svg_id) {
     const svg = d3.select(svg_id);
@@ -21,9 +22,8 @@ function clearChart(svg_id) {
         elementToRemove.remove(); 
         const parentElement = document.querySelector(".flex-box-charts");
         const svg_new = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-        svg_new.setAttribute("width", "800");
-        svg_new.setAttribute("height", "500");
-        svg_new.setAttribute("id","global-warming")
+        svg_new.setAttribute("id","legend");
+        svg_new.setAttribute("align-items", "flex-end");
         parentElement.appendChild(svg_new);
     }
 }
@@ -45,8 +45,8 @@ function selectEndYear() {
 function initChart(startYear, endYear, currentChart) {
     if (currentChart === 'energy_cons') {
         init_energy_cons(svg_width, svg_height, startYear, endYear, svg_id)
-    } else if (currentChart === '1796_1836') {
-        init_1796_1836(svg_width, svg_height, startYear, endYear, svg_id)
+    } else if (currentChart === 'c02') {
+        init_c02(svg_width, svg_height, startYear, endYear, svg_id)
     } else if (currentChart === '1850_1950') {
         init_1850_1950(svg_width, svg_height, startYear, endYear, svg_id_with_legend_hash)
     } else if (currentChart === '1960_2020') {
