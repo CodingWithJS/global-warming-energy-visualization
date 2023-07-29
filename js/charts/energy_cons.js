@@ -1,23 +1,24 @@
-async function init_energy_cons(svg_width, svg_height, start_year = 1800, end_year = 2022, svg_id = '#global-warming-chart') {
+async function init_energy_cons(svg_width, svg_height, start_year = 1850, end_year = 2020, svg_id = '#global-warming-chart') {
     const width = svg_width;
     const height = svg_height;
     const margin = { top: 20, right: 20, bottom: 40, left: 60 };
     const chartWidth = width - margin.left - margin.right;
     const chartHeight = height - margin.top - margin.bottom;
-    const default_start_year = 1800;
-    const default_end_year = 2022;
+    const default_start_year = 1850;
+    const default_end_year = 2020;
     // Retrieve data
     const filePath = "././data/global-energy-substitution.csv"
     let data = await d3.csv("././data/global-energy-substitution.csv")
     // Parse the data into appropriate types
-    //data = data.filter(d => Number(d.year) >= start_year).filter(d => Number(d.year) <= end_year);
+    columns = data.columns;
+    data = data.filter(d => Number(d.year) >= start_year).filter(d => Number(d.year) <= end_year);
 
     data.forEach(d => {
         d.year = Number(d.year);
     });
-    console.log('Data: ', data, data.columns, data['coal']);
+    console.log('Data: ', data, columns);
 
-    var source = data.columns.slice(3).map(function (id) {
+    var source = columns.slice(3).map(function (id) {
         return {
             id: id,
             values: data.map(function (d) {

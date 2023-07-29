@@ -1,4 +1,4 @@
-async function init_c02(svg_width, svg_height, start_year = 1850, end_year = 2020, svg_id = '#global-warming-chart') {
+async function init_temperature(svg_width, svg_height, start_year = 1850, end_year = 2020,region = 'World', svg_id = '#global-warming-chart') {
     const width = svg_width;
     const height = svg_height;
     const margin = { top: 20, right: 20, bottom: 40, left: 60 };
@@ -6,25 +6,30 @@ async function init_c02(svg_width, svg_height, start_year = 1850, end_year = 202
     const chartHeight = height - margin.top - margin.bottom;
     const default_start_year = 1850;
     const default_end_year = 2020;
+    const default_region = 'World';
+    const default_region_dropdown_val = '<option value="'+region+'">'+region+'</option>';
     // Retrieve data
-    const filePath = "././data/co2-emissions-by-fuel-line.csv"
-    let data = await d3.csv("././data/co2-emissions-by-fuel-line.csv")
+    const filePath = "././data/warming-fossil-fuels-land-use.csv"
+    let raw_data = await d3.csv("././data/warming-fossil-fuels-land-use.csv")
     // Parse the data into appropriate types
     //data = data.filter(d => Number(d.year) >= start_year).filter(d => Number(d.year) <= end_year);
-    columns = data.columns;
-    data = data.filter(d => d.entity=='World').filter(d => Number(d.year) >= start_year).filter(d => Number(d.year) <= end_year);
+    columns = raw_data.columns;
+    console.log('Region',region);
+    data = raw_data.filter(d => d.entity==region).filter(d => Number(d.year) >= start_year).filter(d => Number(d.year) <= end_year);
     console.log("Data New",data);
 
     data.forEach(d => {
         d.year = Number(d.year);
+        d.change_fossil_fuel = parseFloat(d.change_fossil_fuel).toFixed(4);
+        d.change_agri_land_use = parseFloat(d.change_agri_land_use).toFixed(4);
     });
-    console.log('Data: ', data, data.columns, data['coal']);
+    console.log('Data: ', data, columns);
 
     var source = columns.slice(3).map(function (id) {
         return {
             id: id,
             values: data.map(function (d) {
-                return { year: d.year, co2: Number(d[id])/1000000000 };
+                return { year: d.year, temp: Number(d[id]) };
             })
         };
     });
@@ -42,6 +47,10 @@ async function init_c02(svg_width, svg_height, start_year = 1850, end_year = 202
         populateDropdownFullYear('start-years', data);
         populateDropdownFullYear('end-years', data);
     }
+
+    populateRegion('regions',raw_data, default_region_dropdown_val);
+
+
 
     // Create the SVG element
     const svg = d3
@@ -62,9 +71,14 @@ async function init_c02(svg_width, svg_height, start_year = 1850, end_year = 202
         .range([0, chartWidth])
 
     // Create a scale for the y-axis
+    var list = [];
+    data.forEach( d => {
+        list.push(Number(d.change_fossil_fuel));
+        list.push(Number(d.change_agri_land_use));
+    })
     const yScale = d3
     .scaleLinear()
-    .domain([0, 20])
+    .domain(d3.extent(list))
     .range([chartHeight, 0]);
 
     // color palette
@@ -72,7 +86,7 @@ async function init_c02(svg_width, svg_height, start_year = 1850, end_year = 202
     console.log(res);
     var color = d3.scaleOrdinal()
         .domain(res)
-        .range(['#e41a1c', '#377eb8', '#4daf4a', '#984ea3', '#ff7f00', '#ffff33', '#a65628', '#f781bf', '#999999', '#000fff'])
+        .range(['#e41a1c', '#377eb8'])
 
 
 
@@ -82,16 +96,10 @@ async function init_c02(svg_width, svg_height, start_year = 1850, end_year = 202
         .enter()
         .append('path')
         .attr("d", function (d) {
-            try {
             return d3.line()
                 .x(function (d) { return margin.left + xScale(Number(d.year)); })
-                .y(function (d) { return margin.top + yScale(Number(d.co2)); })
+                .y(function (d) { return margin.top + yScale(Number(d.temp)); })
                 (d.values)
-            }
-            catch(err) {
-                console.log(err);
-                console.log(d);
-            }
 
         })
         .attr('fill', 'none')
@@ -160,7 +168,7 @@ async function init_c02(svg_width, svg_height, start_year = 1850, end_year = 202
     // Append Y-axis
     svg.append('g')
         .attr("transform", `translate(${margin.left}, ${margin.top})`)
-        .call(d3.axisLeft(yScale).tickFormat(d3.format("~s")));
+        .call(d3.axisLeft(yScale).tickFormat(d3.format(".4f")));
 
     // Append x-axis label
     svg.append("text")
@@ -178,10 +186,9 @@ async function init_c02(svg_width, svg_height, start_year = 1850, end_year = 202
         .attr("dy", "1em")
         .style("text-anchor", "middle")
         .style("fill", "black")
-        .text("CO2 emissions");
+        .text("Global Mean Surface Temperature Change (C)");
 
     var chartData = source.map(function (d) {
-        console.log(d);
         return { name: d.id, color: color(d.id) };
     })
     console.log(chartData);

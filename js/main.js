@@ -3,15 +3,12 @@ const svg_id_with_legend = 'legend';
 const svg_id_with_legend_hash = '#legend';
 const svg_width = 800;
 const svg_height = 500;
-const chart_title_pre_1778 = "Population estimates prior to 1778";
-const chart_title_1796_1836 = "Recorded Population 1796 - 1836";
-const chart_title_1850_1950 = "Hawaiian/U.S. Population Census Data 1850 - 1950";
-const chart_title_1960_2020 = "U.S. Population Census Data 1960 - 2020";
-const chart_title_full = "Full Recorded Population Data Timeline";
 const energy_consumption_chart_title = "Energy Consumption in the World from Different Sources"
 const co2_chart_title = "CO2 Emissions by Fuel/Industry"
+const temperature_chart_title = "Global Warming Contributions from fossil fuels and land use"
 var start_year;
 var end_year;
+var region;
 var current_chart = 'energy_cons';
 
 function clearChart(svg_id) {
@@ -20,12 +17,15 @@ function clearChart(svg_id) {
     if (document.getElementById(svg_id_with_legend) != null) {
         const elementToRemove = document.getElementById(svg_id_with_legend);
         elementToRemove.remove(); 
+    }
         const parentElement = document.querySelector(".flex-box-charts");
         const svg_new = document.createElementNS("http://www.w3.org/2000/svg", "svg");
         svg_new.setAttribute("id","legend");
-        svg_new.setAttribute("align-items", "flex-end");
+        svg_new.setAttribute("width","200");
+        svg_new.setAttribute("height","200");
+        svg_new.setAttribute("style","align-self: flex-end;" );
         parentElement.appendChild(svg_new);
-    }
+    
 }
 
 function selectStartYear() {
@@ -42,17 +42,20 @@ function selectEndYear() {
     }
 }
 
-function initChart(startYear, endYear, currentChart) {
+function selectRegion() {
+    const selectedRegion = document.getElementById("regions").value;
+    if (selectedRegion) {
+        region = selectedRegion;
+    }
+}
+
+function initChart(startYear, endYear,region, currentChart) {
     if (currentChart === 'energy_cons') {
         init_energy_cons(svg_width, svg_height, startYear, endYear, svg_id)
     } else if (currentChart === 'c02') {
         init_c02(svg_width, svg_height, startYear, endYear, svg_id)
-    } else if (currentChart === '1850_1950') {
-        init_1850_1950(svg_width, svg_height, startYear, endYear, svg_id_with_legend_hash)
-    } else if (currentChart === '1960_2020') {
-        init_1960_2020(svg_width, svg_height, startYear, endYear, svg_id)
-    } else if (currentChart === 'full') {
-        init_entire_timeline(svg_width, svg_height, startYear, endYear, svg_id)
+    } else if (currentChart === 'temperature') {
+        init_temperature(svg_width, svg_height, startYear, endYear, region, svg_id)
     }
 }
 
@@ -70,14 +73,15 @@ function loadPElement(text) {
     }
 }
 
-function clearYears() {
+function clearYearsAndRegion() {
     start_year = undefined;
     end_year = undefined;
+    region = undefined;
 }
 
-function populateDropdownFull(dropDownId, data) {
+function populateDropdownFullYear(dropDownId, data) {
     const dropdown = document.getElementById(dropDownId)
-    dropdown.innerHTML = '<option value="">-- Select Year --</option>'
+    dropdown.innerHTML = '<option value="">-- Select Year --</option>';
 
     const minValue = d3.min(data, d => +d.year);
     const maxValue = d3.max(data, d => +d.year);
@@ -92,9 +96,9 @@ function populateDropdownFull(dropDownId, data) {
     })
 }
 
-function populateDropdownFilterStart(dropDownId, data) {
+function populateDropdownFilterStartYear(dropDownId, data) {
     const dropdown = document.getElementById(dropDownId)
-    dropdown.innerHTML = '<option value="">-- Select Year --</option>'
+    dropdown.innerHTML = '<option value="">-- Select Year --</option>';
 
     const minValue = d3.min(data, d => +d.year);
     const maxValue = d3.max(data, d => +d.year);
@@ -109,9 +113,9 @@ function populateDropdownFilterStart(dropDownId, data) {
     })
 }
 
-function populateDropdownFilterEnd(dropDownId, data) {
+function populateDropdownFilterEndYear(dropDownId, data) {
     const dropdown = document.getElementById(dropDownId)
-    dropdown.innerHTML = '<option value="">-- Select Year --</option>'
+    dropdown.innerHTML = '<option value="">-- Select Year --</option>';
 
     const minValue = d3.min(data, d => +d.year);
     const maxValue = d3.max(data, d => +d.year);
@@ -123,5 +127,23 @@ function populateDropdownFilterEnd(dropDownId, data) {
             option.textContent = d.year;
             dropdown.appendChild(option);
         }
+    })
+}
+
+function populateRegion(dropDownId, data, initial_val) {
+    const dropdown = document.getElementById(dropDownId)
+    dropdown.innerHTML = !initial_val ? '<option value="">-- Select Region --</option>' : initial_val;
+
+    const uniq_vals = new Set();
+    
+    data.forEach( d => {
+        uniq_vals.add(d.entity);
+    })
+
+    uniq_vals.forEach( d => {
+        const option = document.createElement("option");
+        option.value = d;
+        option.textContent = d;
+        dropdown.appendChild(option);
     })
 }
