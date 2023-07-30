@@ -27,18 +27,6 @@ async function init_energy_cons(svg_width, svg_height, start_year = 1850, end_ye
     });
 
 
-
-    if (start_year !== default_start_year && end_year !== default_end_year) {
-        console.log("Please reset chart!")
-    } else if (end_year !== default_end_year) {
-        populateDropdownFilterEndYear('start-years', data);
-    } else if (start_year !== default_start_year) {
-        populateDropdownFilterStartYear('end-years', data);
-    } else {
-        populateDropdownFullYear('start-years', data);
-        populateDropdownFullYear('end-years', data);
-    }
-
     // Create the SVG element
     const svg = d3
         .select(svg_id)
@@ -64,10 +52,10 @@ async function init_energy_cons(svg_width, svg_height, start_year = 1850, end_ye
         .range([chartHeight, 0]);
 
     // color palette
-    var res = ["coal","gas","oil","biofuels","solar","wind","hydropower","nuclear","traditional biomass","other renewable"];
+    var res = ["coal", "gas", "oil", "biofuels", "solar", "wind", "hydropower", "nuclear", "traditional biomass", "other renewable"];
     var color = d3.scaleOrdinal()
         .domain(res)
-        .range(['#e41a1c', '#377eb8', '#4daf4a', '#984ea3', '#ff7f00', '#ffff33', '#a65628', '#f781bf', '#999999', '#000fff'])
+        .range(['#e41a1c', '#377eb8', '#4daf4a', '#984ea3', '#74FF33', '#ffff33', '#a65628', '#f781bf', '#999999', '#000fff'])
 
 
 
@@ -111,35 +99,6 @@ async function init_energy_cons(svg_width, svg_height, start_year = 1850, end_ye
     .transition(transitionPath)
     .attr("stroke-dashoffset", 0);**/
 
-    /**svg.append('g')
-        .selectAll('circle')
-        .data(data)
-        .enter()
-        .append('circle')
-            .attr('cx', (d) => margin.left + xScale(d.year))
-            .attr('cy', (d) => margin.top + yScale(d.population))
-            .attr('r', 5)
-            .style('fill', 'steelblue')
-            .style('stroke', 'black')
-            .on("mouseover", (d) => {
-                // Show the tooltip on mouseover
-                const tooltip = svg.append("g")
-                .attr("class", "tooltip")
-                .attr("transform", "translate(" + (xScale(d.year) + 10) + "," + (yScale(d.population) - 20) + ")");
-
-                tooltip.append("text")
-                    .attr("y", 15)
-                    .text("Year: " + d.year);
-
-                tooltip.append("text")
-                    .attr("y", 30)
-                    .text("Population: " + d.population);
-            })
-            .on("mouseout", (d,i) => {
-                // Remove the tooltip on mouseout
-                svg.select(".tooltip").remove();
-            })
-            **/
 
     // Append X-axis
     svg.append('g')
@@ -207,24 +166,45 @@ async function init_energy_cons(svg_width, svg_height, start_year = 1850, end_ye
         .attr('y', (d, i) => yOffset + (legendItemSize + legendSpacing) * i + 12)
         .text(d => d.name);
 
-    /*const annotations = [{
-        type: d3.annotationCalloutElbow,
+    const annotations = [{
+        type: d3.annotationCalloutCircle,
         connector: { end: "arrow" },
         note: { 
-            label: "resulted in 5,000–175,000 deaths, spread through contact with foreigners",
-            title: "Oku‘u (pestilence)",
+            label: "In recent years the amount of fossil fuels being burned for generating energy has gone up compared to other sources",
+            title: "Fossil Fuel Usage",
             wrap: 300
         },
-        x: xScale(1804) + margin.left,
-        y: yScale(210000) + margin.top,
-        dx: 127,
+        subject: {
+            radius: 80,         // circle radius
+            radiusPadding: 10   // white space around circle befor connector
+          },
+        x: xScale(2005) + margin.left,
+        y: yScale(40000) + margin.top,
+        dx: -127,
         dy: -50,
-    }].map(function(d){ d.color = "#E8336D"; return d})
+    },{
+        type: d3.annotationCalloutCircle,
+        connector: { end: "arrow" },
+        note: { 
+            label: "Rise in energy demands due to second indutrial revolution",
+            title: "Industrial Revolution",
+            wrap: 300
+        },
+        subject: {
+            radius: 40,         // circle radius
+            radiusPadding: 10   // white space around circle befor connector
+          },
+        x: xScale(1910) + margin.left,
+        y: yScale(5000) + margin.top,
+        dx: 20,
+        dy: -80,
+    }].map(function(d){ d.color = "#FF4500"; return d})
 
       const makeAnnotations = d3.annotation()
         .annotations(annotations)
 
     svg.append("g")
     .attr("class", "annotation-group")
-    .call(makeAnnotations)*/
+    .call(makeAnnotations)
+
 }

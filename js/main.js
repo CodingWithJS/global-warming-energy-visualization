@@ -52,8 +52,8 @@ function selectRegion() {
 function initChart(startYear, endYear,region, currentChart) {
     if (currentChart === 'energy_cons') {
         init_energy_cons(svg_width, svg_height, startYear, endYear, svg_id)
-    } else if (currentChart === 'c02') {
-        init_c02(svg_width, svg_height, startYear, endYear, svg_id)
+    } else if (currentChart === 'co2') {
+        init_co2(svg_width, svg_height, startYear, endYear,region, svg_id)
     } else if (currentChart === 'temperature') {
         init_temperature(svg_width, svg_height, startYear, endYear, region, svg_id)
     }

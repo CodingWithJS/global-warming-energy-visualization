@@ -1,4 +1,4 @@
-entity,code,year,change_fossil_fuel,change_agri_land_use
+entity,code,year,change_by_fossil_fuel,change_by_agriculture_land_use
 Afghanistan,AFG,1851,2.05E-07,2.65441E-06
 Afghanistan,AFG,1852,4.11E-07,5.32715E-06
 Afghanistan,AFG,1853,6.19E-07,8.02363E-06

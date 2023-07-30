@@ -20,8 +20,8 @@ async function init_temperature(svg_width, svg_height, start_year = 1850, end_ye
 
     data.forEach(d => {
         d.year = Number(d.year);
-        d.change_fossil_fuel = parseFloat(d.change_fossil_fuel).toFixed(4);
-        d.change_agri_land_use = parseFloat(d.change_agri_land_use).toFixed(4);
+        d.change_by_fossil_fuel = parseFloat(d.change_by_fossil_fuel).toFixed(4);
+        d.change_by_agriculture_land_use = parseFloat(d.change_by_agriculture_land_use).toFixed(4);
     });
 
     var source = columns.slice(3).map(function (id) {
@@ -71,8 +71,8 @@ async function init_temperature(svg_width, svg_height, start_year = 1850, end_ye
     // Create a scale for the y-axis
     var list = [];
     data.forEach(d => {
-        list.push(Number(d.change_fossil_fuel));
-        list.push(Number(d.change_agri_land_use));
+        list.push(Number(d.change_by_fossil_fuel));
+        list.push(Number(d.change_by_agriculture_land_use));
     })
     const yScale = d3
         .scaleLinear()
@@ -84,26 +84,6 @@ async function init_temperature(svg_width, svg_height, start_year = 1850, end_ye
     var color = d3.scaleOrdinal()
         .domain(res)
         .range(['#e41a1c', '#377eb8'])
-
-
-
-    // Append the line path
-    /*const path = svg.selectAll(".line")
-        .data(source)
-        .enter()
-        .append('path')
-        .attr("class","lines")
-        .attr("d", function (d) {
-            return d3.line()
-                .x(function (d) { return margin.left + xScale(Number(d.year)); })
-                .y(function (d) { return margin.top + yScale(Number(d.temp)); })
-                (d.values)
-
-        })
-        .attr('fill', 'none')
-        .attr("stroke", function (d) { return color(d.id) })
-        .attr('stroke-width', 2)
-        ;*/
 
     /**const path_oil = svg.append('path')
         .datum(data)
@@ -127,35 +107,6 @@ async function init_temperature(svg_width, svg_height, start_year = 1850, end_ye
     .attr("stroke-dasharray", pathLength)
     .transition(transitionPath)
     .attr("stroke-dashoffset", 0);**/
-
-    /*svg.append('g')
-        .selectAll('circle')
-        .data(data)
-        .enter()
-        .append('circle')
-            .attr('cx', (d) => margin.left + xScale(d.year))
-            .attr('cy', (d) => margin.top + yScale(d.change_fossil_fuel))
-            .attr('r', 1)
-            .style('fill', 'steelblue')
-            .style('stroke', 'black')
-            .on("mouseover", (d) => {
-                // Show the tooltip on mouseover
-                const tooltip = svg.append("g")
-                .attr("class", "tooltip")
-                .attr("transform", "translate(" + (xScale(d.year) + 10) + "," + (yScale(d.population) - 20) + ")");
-
-                tooltip.append("text")
-                    .attr("y", 15)
-                    .text("Year: " + d.year);
-
-                tooltip.append("text")
-                    .attr("y", 30)
-                    .text("Population: " + d.change_fossil_fuel);
-            })
-            .on("mouseout", (d,i) => {
-                // Remove the tooltip on mouseout
-                svg.select(".tooltip").remove();
-            })*/
 
 
     // Append X-axis
@@ -184,7 +135,7 @@ async function init_temperature(svg_width, svg_height, start_year = 1850, end_ye
         .attr("dy", "1em")
         .style("text-anchor", "middle")
         .style("fill", "black")
-        .text("Global Mean Surface Temperature Change (C)");
+        .text("Global Mean Surface Temperature Change (°C)");
 
     var chartData = source.map(function (d) {
         return { name: d.id, color: color(d.id) };
@@ -222,21 +173,24 @@ async function init_temperature(svg_width, svg_height, start_year = 1850, end_ye
         .append('text')
         .attr('x', xOffset + legendItemSize + 5)
         .attr('y', (d, i) => yOffset + (legendItemSize + legendSpacing) * i + 12)
-        .text(d => d.name);
+        .text(d => d.name.replaceAll("_"," "));
 
     const annotations = [{
-        type: d3.annotationCalloutElbow,
-        connector: { end: "arrow" },
+        type: d3.annotationXYThreshold,
         note: {
-            label: "Ozone hole discovery",
-            title: "Global warming impacts",
-            wrap: 300
+            title: "1°C Breach",
+            label: "The world has recently breached the 1°C temperature rise and if this continues we will soon breach the 1.5°C mark and the impact on the world would be highly irreversible as per the Paris Conference",
+            wrap: 250
+          },
+        subject: {
+            x1: xScale(1850) + margin.left,
+            x2: xScale(2020) + margin.left,
         },
-        x: xScale(1985) + margin.left,
-        y: yScale(0) + margin.top,
-        dx: -10,
-        dy: -50,
-    }].map(function (d) { d.color = "#E8336D"; return d })
+        x: xScale(1880) + margin.left,
+        y: yScale(1) + margin.top,
+        dy: 100,
+        dx: 162,
+    },].map(function (d) { d.color = "#FF4500"; return d })
 
     const makeAnnotations = d3.annotation()
         .annotations(annotations);
@@ -253,12 +207,12 @@ async function init_temperature(svg_width, svg_height, start_year = 1850, end_ye
             return margin.top + yScale(Number(d.temp));
         });
 
-    var city = svg.selectAll(".city")
+    var sourceData = svg.selectAll(".sourceData")
         .data(source)
         .enter().append("g")
-        .attr("class", "city");
+        .attr("class", "sourceData");
 
-    city.append("path")
+    sourceData.append("path")
         .attr("class", "line")
         .attr("d", function (d) {
             return line(d.values);
@@ -269,22 +223,6 @@ async function init_temperature(svg_width, svg_height, start_year = 1850, end_ye
         .attr('stroke-width', 2)
         .attr('fill', 'none');
 
-    city.append("text")
-        .datum(function (d) {
-            return {
-                name: d.id,
-                value: d.values[d.values.length - 1]
-            };
-        })
-        .attr("transform", function (d) {
-            return "translate(" + xScale(d.value.year) + "," + yScale(d.value.temp) + ")";
-        })
-        .attr("x", 3)
-        .attr("dy", ".35em")
-        .text(function (d) {
-            return d.name;
-        });
-
     var mouseG = svg.append("g")
         .attr("class", "mouse-over-effects");
 
@@ -292,7 +230,7 @@ async function init_temperature(svg_width, svg_height, start_year = 1850, end_ye
         .attr("class", "mouse-line")
         .style("stroke", "black")
         .style("stroke-width", "1px")
-        .style("opacity", "0");
+        .style("opasourceData", "0");
 
     var lines = document.getElementsByClassName('lines');
 
@@ -309,7 +247,7 @@ async function init_temperature(svg_width, svg_height, start_year = 1850, end_ye
         })
         .style("fill", "none")
         .style("stroke-width", "1px")
-        .style("opacity", "0");
+        .style("opasourceData", "0");
 
     mousePerLine.append("text")
         .attr("class","text-1");
@@ -325,19 +263,19 @@ async function init_temperature(svg_width, svg_height, start_year = 1850, end_ye
         .attr('pointer-events', 'all')
         .on('mouseout', function () { // on mouse out hide line, circles and text
             d3.select(".mouse-line")
-                .style("opacity", "0");
+                .style("opasourceData", "0");
             d3.selectAll(".mouse-per-line circle")
-                .style("opacity", "0");
+                .style("opasourceData", "0");
             d3.selectAll(".mouse-per-line text")
-                .style("opacity", "0");
+                .style("opasourceData", "0");
         })
         .on('mouseover', function () { // on mouse in show line, circles and text
             d3.select(".mouse-line")
-                .style("opacity", "1");
+                .style("opasourceData", "1");
             d3.selectAll(".mouse-per-line circle")
-                .style("opacity", "1");
+                .style("opasourceData", "1");
             d3.selectAll(".mouse-per-line text")
-                .style("opacity", "1");
+                .style("opasourceData", "1");
         })
         .on('mousemove', function () { // mouse moving over canvas
             var mouse = d3.mouse(this);
