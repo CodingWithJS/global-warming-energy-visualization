@@ -24,11 +24,11 @@
   </div>
   <div class="flex-box">
     <div class="pagination">
-      <a href="#" class="disabled" >&laquo;</a>
-      <a href="index.html" class="active">Energy</a>
-      <a href="co2.html">CO2</a>
+      <a href="index.html">&laquo;</a>
+      <a href="index.html" >Energy</a>
+      <a href="co2.html" class="active">CO2</a>
       <a href="gw.html">Global Warming</a>
-      <a href="co2.html">&raquo;</a>
+      <a href="gw.html">&raquo;</a>
     </div>
   </div>
   <div class="flex-box">
@@ -55,6 +55,11 @@
               onchange="selectEndYear();clearChart(svg_id);initChart(start_year, end_year,region, current_chart);">
               <option value="">-- Select Year --</option>
             </select>&nbsp;
+            <label>Regions&nbsp;</label>
+            <select id="regions"
+              onchange="selectRegion();clearChart(svg_id);initChart(start_year, end_year,region, current_chart);">
+              <option value="">-- Select Region --</option>
+            </select>&nbsp;
             <button onclick="clearChart(svg_id);clearYearsAndRegion();initChart(start_year, end_year,region, current_chart);">Reset
               Chart</button>
           </div>
@@ -79,7 +84,7 @@
     <a href="https://github.com/owid">Our World In Data Github</a>
   </div>
   <script src="js/charts/energy_cons.js"
-    onload="clearChart(svg_id);clearYearsAndRegion();init_energy_cons(svg_width,svg_height,undefined,undefined,svg_id);current_chart='energy_cons';loadH2Element(energy_consumption_chart_title);loadPElement(energy_consumption_chart_paragraph);"></script>
+    onload="clearChart(svg_id);clearYearsAndRegion();init_c02(svg_width,svg_height,undefined,undefined,undefined,svg_id);current_chart='co2';loadH2Element(co2_chart_title);loadPElement(co2_chart_paragraph);"></script>
 </body>
 
 </html>

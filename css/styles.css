@@ -11,7 +11,7 @@
   flex-basis: 30%;
 }
 
-.parent{
+.parent {
   display: inline-flex;
 
 }
@@ -35,7 +35,7 @@ circle {
 }
 
 .navbar {
-  background-color: #333;
+
   padding: 0;
   margin: 0;
   list-style-type: none;
@@ -47,22 +47,108 @@ circle {
 
 .navbar a {
   display: block;
-  color: #fff;
+  color: black;
   text-decoration: none;
   padding: 0px 0px;
 }
 
 .navbar a:hover {
-  background-color: #555;
+  background-color: yellow;
 }
 
 .flex-container {
   display: flex;
-  justify-content: center; 
+  justify-content: center;
   align-items: center;
 }
 
 #legend svg {
   height: 200px;
   width: 200px;
+}
+
+ul {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+  overflow-y: clip;
+  white-space: nowrap;
+}
+
+li+li {
+  padding: 1em 2em 1em 3em;
+}
+
+li {
+  background-color: yellow;
+  padding: 1em 2em;
+  position: relative;
+  display: inline-block;
+  vertical-align: top;
+}
+
+li.active,
+li.active+li:before {
+  background: orangered;
+}
+
+li:hover:before,
+li.active:before {
+  background: yellow;
+}
+
+li:last-child:after,
+li+li:before {
+  content: '';
+  position: absolute;
+  top: -0.1em;
+  bottom: 0;
+  border-right: solid;
+  border-top: solid;
+  pointer-events: none;
+  box-sizing: border-box;
+  box-shadow: 3px -3px 6px -3px gray;
+  width: 3em;
+  transform: rotate(30deg) skewy(30deg);
+  z-index: 1;
+}
+
+li:last-child:after {
+  right: -1.5em;
+  background: yellow;
+}
+
+li+li:before {
+  left: -2em;
+  background: yellow;
+}
+
+a {
+  cursor: pointer;
+}
+
+.pagination {
+  display: inline-block;
+}
+
+.pagination a {
+  color: black;
+  float: left;
+  padding: 8px 16px;
+  text-decoration: none;
+  transition: background-color .3s;
+  border: 1px solid #ddd;
+  margin: 0 4px;
+}
+
+.pagination a.active {
+  background-color: #4CAF50;
+  color: white;
+  border: 1px solid #4CAF50;
+}
+
+.pagination a:hover:not(.active) {background-color: #ddd;}
+
+.disabled {
+  pointer-events: none;
 }

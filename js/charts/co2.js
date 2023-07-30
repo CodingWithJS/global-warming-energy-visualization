@@ -7,18 +7,15 @@ async function init_c02(svg_width, svg_height, start_year = 1850, end_year = 202
     const default_start_year = 1850;
     const default_end_year = 2020;
     // Retrieve data
-    const filePath = "././data/co2-emissions-by-fuel-line.csv"
-    let data = await d3.csv("././data/co2-emissions-by-fuel-line.csv")
+    //const filePath = "././data/co2-emissions-by-fuel-line.csv"
+    let raw_data = await d3.csv("././data/co2-emissions-by-fuel-line.csv")
     // Parse the data into appropriate types
-    //data = data.filter(d => Number(d.year) >= start_year).filter(d => Number(d.year) <= end_year);
-    columns = data.columns;
-    data = data.filter(d => d.entity=='World').filter(d => Number(d.year) >= start_year).filter(d => Number(d.year) <= end_year);
-    console.log("Data New",data);
+    columns = raw_data.columns;
+    data = raw_data.filter(d => d.entity=='World').filter(d => Number(d.year) >= start_year).filter(d => Number(d.year) <= end_year);
 
     data.forEach(d => {
         d.year = Number(d.year);
     });
-    console.log('Data: ', data, data.columns, data['coal']);
 
     var source = columns.slice(3).map(function (id) {
         return {
@@ -28,8 +25,6 @@ async function init_c02(svg_width, svg_height, start_year = 1850, end_year = 202
             })
         };
     });
-
-    console.log("Source", source);
 
 
     if (start_year !== default_start_year && end_year !== default_end_year) {
@@ -68,13 +63,11 @@ async function init_c02(svg_width, svg_height, start_year = 1850, end_year = 202
     .range([chartHeight, 0]);
 
     // color palette
-    var res = source.map(function (d) { return d.id }) // list of group names
-    console.log(res);
+
+    var res = ["coal","gas","oil","cement","flaring","others"];
     var color = d3.scaleOrdinal()
-        .domain(res)
-        .range(['#e41a1c', '#377eb8', '#4daf4a', '#984ea3', '#ff7f00', '#ffff33', '#a65628', '#f781bf', '#999999', '#000fff'])
-
-
+            .domain(res)
+            .range(['#e41a1c', '#377eb8', '#4daf4a', '#984ea3', '#ff7f00', '#ffff33'])
 
     // Append the line path
     const path = svg.selectAll(".line")
@@ -82,16 +75,10 @@ async function init_c02(svg_width, svg_height, start_year = 1850, end_year = 202
         .enter()
         .append('path')
         .attr("d", function (d) {
-            try {
             return d3.line()
                 .x(function (d) { return margin.left + xScale(Number(d.year)); })
                 .y(function (d) { return margin.top + yScale(Number(d.co2)); })
                 (d.values)
-            }
-            catch(err) {
-                console.log(err);
-                console.log(d);
-            }
 
         })
         .attr('fill', 'none')
@@ -181,10 +168,8 @@ async function init_c02(svg_width, svg_height, start_year = 1850, end_year = 202
         .text("CO2 emissions");
 
     var chartData = source.map(function (d) {
-        console.log(d);
         return { name: d.id, color: color(d.id) };
     })
-    console.log(chartData);
 
     //Initialize legend
     var legendItemSize = 12;

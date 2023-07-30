@@ -16,7 +16,6 @@ async function init_energy_cons(svg_width, svg_height, start_year = 1850, end_ye
     data.forEach(d => {
         d.year = Number(d.year);
     });
-    console.log('Data: ', data, columns);
 
     var source = columns.slice(3).map(function (id) {
         return {
@@ -27,19 +26,18 @@ async function init_energy_cons(svg_width, svg_height, start_year = 1850, end_ye
         };
     });
 
-    console.log(source);
 
 
-    /*if (start_year !== default_start_year && end_year !== default_end_year) {
+    if (start_year !== default_start_year && end_year !== default_end_year) {
         console.log("Please reset chart!")
     } else if (end_year !== default_end_year) {
-        populateDropdownFilterEnd('start-years', data);
+        populateDropdownFilterEndYear('start-years', data);
     } else if (start_year !== default_start_year) {
-        populateDropdownFilterStart('end-years', data);
+        populateDropdownFilterStartYear('end-years', data);
     } else {
-        populateDropdownFull('start-years', data);
-        populateDropdownFull('end-years', data);
-    }*/
+        populateDropdownFullYear('start-years', data);
+        populateDropdownFullYear('end-years', data);
+    }
 
     // Create the SVG element
     const svg = d3
@@ -66,8 +64,7 @@ async function init_energy_cons(svg_width, svg_height, start_year = 1850, end_ye
         .range([chartHeight, 0]);
 
     // color palette
-    var res = source.map(function (d) { return d.id }) // list of group names
-    console.log(res);
+    var res = ["coal","gas","oil","biofuels","solar","wind","hydropower","nuclear","traditional biomass","other renewable"];
     var color = d3.scaleOrdinal()
         .domain(res)
         .range(['#e41a1c', '#377eb8', '#4daf4a', '#984ea3', '#ff7f00', '#ffff33', '#a65628', '#f781bf', '#999999', '#000fff'])
@@ -173,10 +170,8 @@ async function init_energy_cons(svg_width, svg_height, start_year = 1850, end_ye
         .text("Energy Consumption in TWh");
 
     var chartData = source.map(function (d) {
-        console.log(d);
         return { name: d.id, color: color(d.id) };
-    })
-    console.log(chartData);
+    });
 
     //Initialize legend
     var legendItemSize = 12;

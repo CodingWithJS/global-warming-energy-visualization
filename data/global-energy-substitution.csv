@@ -1,4 +1,4 @@
-entity,code,year,other_renewable,biofuels,solar,wind,hydropower,nuclear,gas,oil,coal,traditional_biomass
+entity,code,year,other renewable,biofuels,solar,wind,hydropower,nuclear,gas,oil,coal,traditional biomass
 World,OWID_WRL,1800,0,0,0,0,0,0,0,0,97,5556
 World,OWID_WRL,1810,0,0,0,0,0,0,0,0,128,5833
 World,OWID_WRL,1820,0,0,0,0,0,0,0,0,153,6111
