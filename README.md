@@ -1,1 +1,1 @@
-# CodingWithJS.github.io
+# Data visualization project - to show the how the rise in energy consumption has led to increase in global warming and world temperatures
